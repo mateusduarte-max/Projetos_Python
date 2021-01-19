@@ -1,0 +1,31 @@
+# Projetos_Python
+Códigos em python
+
+
+import pandas as pd
+ 
+
+
+# Função para importar a base
+
+def import_base(arquivo):
+    base = pd.read_excel(arquivo, header=3)
+    return base
+
+
+#função para agregação
+def retira(coluna):
+    dinamica = base.groupby(coluna).agg({
+        'Ticket Id': 'count'            
+    })
+    return print(dinamica.tail(10))
+
+
+
+base = import_base(r'C:\Users\mo_duarte\Desktop\RESOLVE\Indicadores\ResolveComVoce\Forecast\Base_Retira_Loja\retira.xlsx')
+
+# agregar coluna data ticket criado
+retira("Date (Ticket Created)")
+
+# Status retira - fila
+retira('Ticket Status')
