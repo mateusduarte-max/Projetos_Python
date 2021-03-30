@@ -2,7 +2,7 @@ import pandas as pd
 import datetime as dt
 
 def base_mkt():
-    arquivo = pd.read_csv(r'C:\Users\mo_duarte\Desktop\RESOLVE\Indicadores\Painel Backlog\aba backlog 3p\tratativa-marketplace-view-2021-01-25-0933.csv', sep=',')
+    arquivo = pd.read_csv(r'C:\Users\mo_duarte\Desktop\RESOLVE\Indicadores\Painel Backlog\aba backlog 3p\tratativa-marketplace-view-2021-03-29-0954.csv', sep=',')
     arquivo['Solicitado'] = pd.to_datetime(arquivo['Solicitado'])
     arquivo['Hoje'] = dt.date.today()
     arquivo['Hoje'] = pd.to_datetime(arquivo['Hoje'])
