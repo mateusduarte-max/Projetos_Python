@@ -2,7 +2,7 @@ import pandas as pd
 import datetime as dt
 
 def base_mkt():
-    arquivo = pd.read_csv(r'C:\Users\mo_duarte\Desktop\RESOLVE\Indicadores\Painel Backlog\aba backlog 3p\tratativa-marketplace-view-2021-03-29-0954.csv', sep=',')
+    arquivo = pd.read_csv(r'C:\Users\mo_duarte\Desktop\RESOLVE\Indicadores\Painel Backlog\aba backlog 3p\tratativa-marketplace-view-2021-04-08-0914.csv', sep=',')
     arquivo['Solicitado'] = pd.to_datetime(arquivo['Solicitado'])
     arquivo['Hoje'] = dt.date.today()
     arquivo['Hoje'] = pd.to_datetime(arquivo['Hoje'])
@@ -41,6 +41,7 @@ def base_merge():
     base_6 = base_5.copy()
     base_6['Atrasado'] = base_6.apply(atraso, axis=1)
     base_6.to_excel(r'C:\Users\mo_duarte\Desktop\RESOLVE\Indicadores\Painel Backlog\aba backlog 3p\teste.xlsx', index=False)
+    print("Arquivo exportado com sucesso!")
     return base_6
 
 base_merge()
