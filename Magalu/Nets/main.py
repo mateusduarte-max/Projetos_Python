@@ -6,7 +6,7 @@ import time
 
 
 
-date_ini = '2021-01-01'
+date_ini = '2022-04-01'
 today = time.strftime("%Y-%m-%d")
 
 con = Connection()

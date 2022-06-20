@@ -1,16 +1,14 @@
 import cx_Oracle
 import pandas as pd
 from google.oauth2 import service_account
-import datetime
-from autenticacoes_nets import Connection
 
-con = Connection()
 
-dsn_tns = cx_Oracle.makedsn(con.ip, con.port, con.SID)
+ip = '187.61.25.77'
+port = 1521
+SID = 'BI'
+dsn_tns = cx_Oracle.makedsn(ip, port, SID)
 
-connection = cx_Oracle.connect(con.usuario, con.senha, dsn_tns)
-
-data_base = (datetime.datetime.now() - datetime.timedelta(45)).strftime('%d-%m-%Y')
+connection = cx_Oracle.connect('LUCIANADEDONIO', 'Netshoes2017', dsn_tns)
 
 df_ora = pd.read_sql_query("""WITH MKT AS(
   SELECT 
@@ -36,11 +34,10 @@ df_ora = pd.read_sql_query("""WITH MKT AS(
   FULL JOIN NS_DWMP.TDIM_PEDIDO PED ON NOTF.SID_PEDIDO = PED.SID_PEDIDO
   WHERE NOTF.IND_STATUS_PEDIDO_LOJA <> 'T'
   AND NOTF.SID_PAIS = 1
-  AND PED.DAT_CRIA_PEDIDO >= TO_DATE('{}','DD/MM/YY')
+  AND PED.DAT_CRIA_PEDIDO >= TO_DATE('01/01/2021','DD/MM/YY')
   AND ALMO.FLG_MARKET_PLACE =1
   AND PGT.SID_TEMPO <> -1
-  AND STAP.STAP_COD IN (10,11,12,27,28)
-  --AND NOM_ALMOXA = 'Studio Z Calçados'
+  AND STAP.STAP_COD IN (12)
   
   
   --AND ALMO.NOM_ALMOXA in ('ELLA STORE', 'Santa Fé', '3LS3 CALÇADOS', 'Ded Calçados', 'LandFeet', 'Acero', 'Calçados Pastori', 'BmBrasil', 'Músculos na Web', 'Ishoes', 'CentralFit', 'BNC SUPLEMENTOS', 'Alma de Praia', 'Alex Shoes', 'PIXOLE CALÇADOS', 'Tucca Calçados')
@@ -64,14 +61,11 @@ FROM BI_STAGE.ABACOS_TCOM_CLIFOR CLI
 
 LOJS AS (
 SELECT 
-a.LOJS_NOM, 
-a.LOJS_EXT_COD SELLER
---a.LOJS_DAT_ULT_ALT
-FROM BI_STAGE.ABACOS_tmkp_lojsta a
-WHERE LOJS_DAT_ULT_ALT = (SELECT MAX(b.LOJS_DAT_ULT_ALT)
-                            FROM BI_STAGE.ABACOS_tmkp_lojsta b
-                            WHERE b.LOJS_NOM = a.LOJS_NOM
-                            GROUP BY b.LOJS_NOM)) --LOJS ON LOJS.LOJS_NOM = ALMO.NOM_ALMOXA
+LOJS_NOM, 
+MAX(LOJS_EXT_COD) SELLER
+FROM BI_STAGE.ABACOS_tmkp_lojsta 
+GROUP BY 
+LOJS_NOM) --LOJS ON LOJS.LOJS_NOM = ALMO.NOM_ALMOXA
 
                 
 SELECT 
@@ -110,13 +104,13 @@ MKT.DAT_CRIA_PEDIDO,
 MKT2.CEP,
 MKT2.ESTADO,
 MKT2.SIGLA,
-MKT2.MUNICIPIO""".format(data_base), con=connection)
+MKT2.MUNICIPIO""", con=connection)
+
+
 
 # Criar autenticação
 # Gravar na tabela
 credentials = service_account.Credentials.from_service_account_file(r'C:\Users\mo_duarte\Desktop\Marketplace\chave_google\marketplace-analytics-333712-5416677751e5.json')
-df_ora.to_gbq(destination_table='data.pedidos_nets',project_id='marketplace-analytics-333712', if_exists='replace', credentials=credentials, progress_bar=True)
-
-#df_ora.to_excel(r'C:\Users\mo_duarte\Desktop\Marketplace\pedidos\Base_pedidos_nets\studio_z.xlsx')
+df_ora.to_gbq(destination_table='data.pedidos_nets_cancelados',project_id='marketplace-analytics-333712', if_exists='replace', credentials=credentials, progress_bar=True)
 
 print("Terminou!!!")
